@@ -25,10 +25,11 @@
 #ifndef ADAFRUIT_USBD_CDC_H_
 #define ADAFRUIT_USBD_CDC_H_
 
-#include "Adafruit_USBD_Device.h"
-#include "Stream.h"
+#include <cstdint>
 
-class Adafruit_USBD_CDC : public Stream, public Adafruit_USBD_Interface {
+#include "Adafruit_USBD_Device.h"
+
+class Adafruit_USBD_CDC : public Adafruit_USBD_Interface {
  public:
   Adafruit_USBD_CDC(void);
 
