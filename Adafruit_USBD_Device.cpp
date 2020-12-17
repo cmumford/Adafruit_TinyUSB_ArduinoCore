@@ -22,8 +22,6 @@
  * THE SOFTWARE.
  */
 
-#ifdef USE_TINYUSB
-
 #include "Adafruit_USBD_Device.h"
 
 #ifndef USB_MANUFACTURER
@@ -471,5 +469,3 @@ static int strcpy_utf16(const char* s, uint16_t* buf, int bufsize) {
 
   return buflen;
 }
-
-#endif  // USE_TINYUSB

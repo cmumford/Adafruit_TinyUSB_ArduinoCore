@@ -22,8 +22,6 @@
  * THE SOFTWARE.
  */
 
-#ifdef USE_TINYUSB
-
 #include "Adafruit_USBD_CDC.h"
 #include "Arduino.h"
 
@@ -167,5 +165,3 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
   }
 }
 }
-
-#endif  // USE_TINYUSB
