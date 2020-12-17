@@ -28,39 +28,43 @@
 #include "Adafruit_USBD_Device.h"
 #include "Stream.h"
 
-class Adafruit_USBD_CDC : public Stream, public Adafruit_USBD_Interface
-{
-public:
-	Adafruit_USBD_CDC(void);
+class Adafruit_USBD_CDC : public Stream, public Adafruit_USBD_Interface {
+ public:
+  Adafruit_USBD_CDC(void);
 
-	// fron Adafruit_USBD_Interface
-	virtual uint16_t getDescriptor(uint8_t itfnum, uint8_t* buf, uint16_t bufsize);
+  // fron Adafruit_USBD_Interface
+  virtual uint16_t getDescriptor(uint8_t itfnum,
+                                 uint8_t* buf,
+                                 uint16_t bufsize);
 
-	void setPins(uint8_t pin_rx, uint8_t pin_tx) { (void) pin_rx; (void) pin_tx; }
-	void begin(uint32_t baud_count);
-	void begin(uint32_t baud, uint8_t config);
-	void end(void);
+  void setPins(uint8_t pin_rx, uint8_t pin_tx) {
+    (void)pin_rx;
+    (void)pin_tx;
+  }
+  void begin(uint32_t baud_count);
+  void begin(uint32_t baud, uint8_t config);
+  void end(void);
 
-	// return line coding set by host
-	uint32_t baud(void);
-	uint8_t  stopbits(void);
-	uint8_t  paritytype(void);
-	uint8_t  numbits(void);
+  // return line coding set by host
+  uint32_t baud(void);
+  uint8_t stopbits(void);
+  uint8_t paritytype(void);
+  uint8_t numbits(void);
 
-	virtual int    available(void);
-	virtual int    peek(void);
-	virtual int    read(void);
-	virtual void   flush(void);
-	virtual size_t write(uint8_t);
+  virtual int available(void);
+  virtual int peek(void);
+  virtual int read(void);
+  virtual void flush(void);
+  virtual size_t write(uint8_t);
 
-	virtual size_t write(const uint8_t *buffer, size_t size);
-	size_t write(const char *buffer, size_t size) {
-	  return write((const uint8_t *)buffer, size);
-	}
+  virtual size_t write(const uint8_t* buffer, size_t size);
+  size_t write(const char* buffer, size_t size) {
+    return write((const uint8_t*)buffer, size);
+  }
 
-	virtual int availableForWrite(void);
-	using Print::write; // pull in write(str) from Print
-	operator bool();
+  virtual int availableForWrite(void);
+  using Print::write;  // pull in write(str) from Print
+  operator bool();
 };
 
 extern Adafruit_USBD_CDC Serial;

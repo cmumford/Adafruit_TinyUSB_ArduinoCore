@@ -24,165 +24,148 @@
 
 #ifdef USE_TINYUSB
 
-#include "Arduino.h"
 #include "Adafruit_USBD_CDC.h"
+#include "Arduino.h"
 
-#define EPOUT   0x00
-#define EPIN    0x80
+#define EPOUT 0x00
+#define EPIN 0x80
 
 Adafruit_USBD_CDC Serial;
 
-Adafruit_USBD_CDC::Adafruit_USBD_CDC(void)
-{
+Adafruit_USBD_CDC::Adafruit_USBD_CDC(void) {}
 
-}
-
-uint16_t Adafruit_USBD_CDC::getDescriptor(uint8_t itfnum, uint8_t* buf, uint16_t bufsize)
-{
+uint16_t Adafruit_USBD_CDC::getDescriptor(uint8_t itfnum,
+                                          uint8_t* buf,
+                                          uint16_t bufsize) {
   // CDC is mostly always existed for DFU
   // usb core will automatically update endpoint number
-  uint8_t desc[] = { TUD_CDC_DESCRIPTOR(itfnum, 0, EPIN, 8, EPOUT, EPIN, 64) };
+  uint8_t desc[] = {TUD_CDC_DESCRIPTOR(itfnum, 0, EPIN, 8, EPOUT, EPIN, 64)};
   uint16_t const len = sizeof(desc);
 
-  if ( bufsize < len ) return 0;
+  if (bufsize < len)
+    return 0;
 
   memcpy(buf, desc, len);
   return len;
 }
 
 // Baud and config is ignore in CDC
-void Adafruit_USBD_CDC::begin (uint32_t baud)
-{
-  (void) baud;
+void Adafruit_USBD_CDC::begin(uint32_t baud) {
+  (void)baud;
 }
 
-void Adafruit_USBD_CDC::begin (uint32_t baud, uint8_t config)
-{
-  (void) baud;
-  (void) config;
+void Adafruit_USBD_CDC::begin(uint32_t baud, uint8_t config) {
+  (void)baud;
+  (void)config;
 }
 
-void Adafruit_USBD_CDC::end(void)
-{
+void Adafruit_USBD_CDC::end(void) {
   // nothing to do
 }
 
-uint32_t Adafruit_USBD_CDC::baud(void)
-{
+uint32_t Adafruit_USBD_CDC::baud(void) {
   cdc_line_coding_t coding;
   tud_cdc_get_line_coding(&coding);
 
   return coding.bit_rate;
 }
 
-uint8_t Adafruit_USBD_CDC::stopbits(void)
-{
+uint8_t Adafruit_USBD_CDC::stopbits(void) {
   cdc_line_coding_t coding;
   tud_cdc_get_line_coding(&coding);
 
   return coding.stop_bits;
 }
 
-uint8_t Adafruit_USBD_CDC::paritytype(void)
-{
+uint8_t Adafruit_USBD_CDC::paritytype(void) {
   cdc_line_coding_t coding;
   tud_cdc_get_line_coding(&coding);
 
   return coding.parity;
 }
 
-uint8_t Adafruit_USBD_CDC::numbits(void)
-{
+uint8_t Adafruit_USBD_CDC::numbits(void) {
   cdc_line_coding_t coding;
   tud_cdc_get_line_coding(&coding);
 
   return coding.data_bits;
 }
 
-Adafruit_USBD_CDC::operator bool()
-{
+Adafruit_USBD_CDC::operator bool() {
   bool ret = tud_cdc_connected();
 
   // Add an yield to run usb background in case sketch block wait as follows
   // while( !Serial ) {}
-  if ( !ret ) yield();
+  if (!ret)
+    yield();
 
   return ret;
 }
 
-int Adafruit_USBD_CDC::available(void)
-{
+int Adafruit_USBD_CDC::available(void) {
   uint32_t count = tud_cdc_available();
 
   // Add an yield to run usb background in case sketch block wait as follows
   // while( !Serial.available() ) {}
-  if (!count) yield();
+  if (!count)
+    yield();
 
   return count;
 }
 
-int Adafruit_USBD_CDC::peek(void)
-{
+int Adafruit_USBD_CDC::peek(void) {
   uint8_t ch;
-  return tud_cdc_peek(0, &ch) ? (int) ch : -1;
+  return tud_cdc_peek(0, &ch) ? (int)ch : -1;
 }
 
-int Adafruit_USBD_CDC::read(void)
-{
-  return (int) tud_cdc_read_char();
+int Adafruit_USBD_CDC::read(void) {
+  return (int)tud_cdc_read_char();
 }
 
-void Adafruit_USBD_CDC::flush(void)
-{
+void Adafruit_USBD_CDC::flush(void) {
   tud_cdc_write_flush();
 }
 
-size_t Adafruit_USBD_CDC::write(uint8_t ch)
-{
+size_t Adafruit_USBD_CDC::write(uint8_t ch) {
   return write(&ch, 1);
 }
 
-size_t Adafruit_USBD_CDC::write(const uint8_t *buffer, size_t size)
-{
+size_t Adafruit_USBD_CDC::write(const uint8_t* buffer, size_t size) {
   size_t remain = size;
-  while ( remain && tud_cdc_connected() )
-  {
+  while (remain && tud_cdc_connected()) {
     size_t wrcount = tud_cdc_write(buffer, remain);
     remain -= wrcount;
     buffer += wrcount;
 
     // Write FIFO is full, run usb background to flush
-    if ( remain ) yield();
+    if (remain)
+      yield();
   }
 
   return size - remain;
 }
 
-int Adafruit_USBD_CDC::availableForWrite(void)
-{
+int Adafruit_USBD_CDC::availableForWrite(void) {
   return tud_cdc_write_available();
 }
 
-extern "C"
-{
+extern "C" {
 
 // Invoked when cdc when line state changed e.g connected/disconnected
 // Use to reset to DFU when disconnect with 1200 bps
-void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts)
-{
-  (void) itf;  // interface ID, not used
-  (void) rts;
+void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
+  (void)itf;  // interface ID, not used
+  (void)rts;
 
   // DTR = false is counted as disconnected
-  if ( !dtr )
-  {
+  if (!dtr) {
     cdc_line_coding_t coding;
     tud_cdc_get_line_coding(&coding);
 
-    if ( coding.bit_rate == 1200 ) Adafruit_TinyUSB_Core_touch1200();
+    if (coding.bit_rate == 1200)
+      Adafruit_TinyUSB_Core_touch1200();
   }
 }
-
 }
 
-#endif // USE_TINYUSB
+#endif  // USE_TINYUSB

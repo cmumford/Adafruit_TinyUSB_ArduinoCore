@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License (MIT)
  *
  * Copyright (c) 2019 Ha Thach for Adafruit Industries
@@ -32,14 +32,16 @@
 #include "tusb.h"
 
 #ifdef __cplusplus
-#include "Adafruit_USBD_Device.h"
 #include "Adafruit_USBD_CDC.h"
+#include "Adafruit_USBD_Device.h"
 #endif
 
-// Called by main.cpp to initialize usb device typically with CDC device for Serial
+// Called by main.cpp to initialize usb device typically with CDC device for
+// Serial
 void Adafruit_TinyUSB_Core_init(void);
 
-// Invoked when host disconnects cdc at baud 1200, usually touch feature to go into DFU mode
+// Invoked when host disconnects cdc at baud 1200, usually touch feature to go
+// into DFU mode
 void Adafruit_TinyUSB_Core_touch1200(void);
 
 #endif /* ADAFRUIT_TINYUSB_CORE_H_ */
