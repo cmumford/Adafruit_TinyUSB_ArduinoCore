@@ -27,7 +27,7 @@
 
 #include <cstdint>
 
-#include "Adafruit_USBD_Device.h"
+#include <Adafruit_USBD_Device.h>
 
 class Adafruit_USBD_CDC : public Adafruit_USBD_Interface {
  public:

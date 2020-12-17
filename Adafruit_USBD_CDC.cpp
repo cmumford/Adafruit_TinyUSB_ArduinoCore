@@ -24,8 +24,8 @@
 
 #include "Adafruit_USBD_CDC.h"
 
-#include <cdc.h>
-#include <cdc_device.h>
+#include <cdc/cdc.h>
+#include <cdc/cdc_device.h>
 
 #define EPOUT 0x00
 #define EPIN 0x80

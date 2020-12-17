@@ -5,8 +5,9 @@ idf_component_register(
         ${SOURCES}
     INCLUDE_DIRS
         "include"
+        "${CMAKE_SOURCE_DIR}/components/Adafruit_TinyUSB_ArduinoCore/include"
         "${CMAKE_SOURCE_DIR}/components/tinyusb/src"
-        "${CMAKE_SOURCE_DIR}/components/tinyusb/src/class/cdc"
+        "${CMAKE_SOURCE_DIR}/components/tinyusb/src/class"
         "${CMAKE_SOURCE_DIR}/components/tinyusb/src/device"
         "${CMAKE_SOURCE_DIR}/main"
         "${IDF_PATH}/components/freertos/include/freertos"

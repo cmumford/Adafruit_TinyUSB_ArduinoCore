@@ -1,3 +1,3 @@
 .PHONY: format
 format:
-	clang-format -i *.cpp *.h
+	clang-format -i *.cpp include/*.h
