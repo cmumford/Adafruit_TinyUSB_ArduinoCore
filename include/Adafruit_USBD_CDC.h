@@ -52,18 +52,18 @@ class Adafruit_USBD_CDC : public Adafruit_USBD_Interface {
   uint8_t paritytype(void);
   uint8_t numbits(void);
 
-  int available(void);
-  int peek(void);
-  int read(void);
-  void flush(void);
-  size_t write(uint8_t);
+  virtual int available(void);
+  virtual int peek(void);
+  virtual int read(void);
+  virtual void flush(void);
+  virtual size_t write(uint8_t);
 
-  size_t write(const uint8_t* buffer, size_t size);
+  virtual size_t write(const uint8_t* buffer, size_t size);
   size_t write(const char* buffer, size_t size) {
     return write((const uint8_t*)buffer, size);
   }
 
-  int availableForWrite(void);
+  virtual int availableForWrite(void);
   operator bool();
 };
 
