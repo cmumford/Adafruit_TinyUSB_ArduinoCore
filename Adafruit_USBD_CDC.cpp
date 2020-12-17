@@ -24,12 +24,13 @@
 
 #include "Adafruit_USBD_CDC.h"
 
+#include <cdc.h>
+#include <cdc_device.h>
+
 #define EPOUT 0x00
 #define EPIN 0x80
 
-Adafruit_USBD_CDC Serial;
-
-Adafruit_USBD_CDC::Adafruit_USBD_CDC(void) {}
+Adafruit_USBD_CDC::Adafruit_USBD_CDC(void) = default;
 
 uint16_t Adafruit_USBD_CDC::getDescriptor(uint8_t itfnum,
                                           uint8_t* buf,
@@ -94,7 +95,7 @@ Adafruit_USBD_CDC::operator bool() {
   // Add an yield to run usb background in case sketch block wait as follows
   // while( !Serial ) {}
   if (!ret)
-    yield();
+    taskYIELD();
 
   return ret;
 }
@@ -105,7 +106,7 @@ int Adafruit_USBD_CDC::available(void) {
   // Add an yield to run usb background in case sketch block wait as follows
   // while( !Serial.available() ) {}
   if (!count)
-    yield();
+    taskYIELD();
 
   return count;
 }
@@ -136,7 +137,7 @@ size_t Adafruit_USBD_CDC::write(const uint8_t* buffer, size_t size) {
 
     // Write FIFO is full, run usb background to flush
     if (remain)
-      yield();
+      taskYIELD();
   }
 
   return size - remain;
@@ -159,8 +160,11 @@ void tud_cdc_line_state_cb(uint8_t itf, bool dtr, bool rts) {
     cdc_line_coding_t coding;
     tud_cdc_get_line_coding(&coding);
 
+    // Investigage purpose of this. Is this Arduino IDE specific?
+#if 0
     if (coding.bit_rate == 1200)
       Adafruit_TinyUSB_Core_touch1200();
+#endif
   }
 }
 }

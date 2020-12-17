@@ -34,7 +34,7 @@ class Adafruit_USBD_Interface {
   const char* _desc_str;
 
  public:
-  Adafruit_USBD_Interface(void) { _desc_str = NULL; }
+  Adafruit_USBD_Interface();
 
   virtual uint16_t getDescriptor(uint8_t itfnum,
                                  uint8_t* buf,

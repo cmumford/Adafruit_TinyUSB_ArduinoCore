@@ -44,6 +44,8 @@ enum { STRID_LANGUAGE = 0, STRID_MANUFACTURER, STRID_PRODUCT, STRID_SERIAL };
 
 Adafruit_USBD_Device USBDevice;
 
+Adafruit_USBD_Interface::Adafruit_USBD_Interface() : _desc_str(nullptr) {}
+
 Adafruit_USBD_Device::Adafruit_USBD_Device(void) {
   tusb_desc_device_t const desc_dev = {
       .bLength = sizeof(tusb_desc_device_t),

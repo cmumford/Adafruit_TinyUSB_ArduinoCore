@@ -33,10 +33,10 @@ class Adafruit_USBD_CDC : public Adafruit_USBD_Interface {
  public:
   Adafruit_USBD_CDC(void);
 
-  // fron Adafruit_USBD_Interface
-  virtual uint16_t getDescriptor(uint8_t itfnum,
+  // from Adafruit_USBD_Interface
+  uint16_t getDescriptor(uint8_t itfnum,
                                  uint8_t* buf,
-                                 uint16_t bufsize);
+                                 uint16_t bufsize) override;
 
   void setPins(uint8_t pin_rx, uint8_t pin_tx) {
     (void)pin_rx;
@@ -52,19 +52,18 @@ class Adafruit_USBD_CDC : public Adafruit_USBD_Interface {
   uint8_t paritytype(void);
   uint8_t numbits(void);
 
-  virtual int available(void);
-  virtual int peek(void);
-  virtual int read(void);
-  virtual void flush(void);
-  virtual size_t write(uint8_t);
+  int available(void);
+  int peek(void);
+  int read(void);
+  void flush(void);
+  size_t write(uint8_t);
 
-  virtual size_t write(const uint8_t* buffer, size_t size);
+  size_t write(const uint8_t* buffer, size_t size);
   size_t write(const char* buffer, size_t size) {
     return write((const uint8_t*)buffer, size);
   }
 
-  virtual int availableForWrite(void);
-  using Print::write;  // pull in write(str) from Print
+  int availableForWrite(void);
   operator bool();
 };
 
