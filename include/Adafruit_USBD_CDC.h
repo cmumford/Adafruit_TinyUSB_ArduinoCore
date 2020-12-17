@@ -35,8 +35,8 @@ class Adafruit_USBD_CDC : public Adafruit_USBD_Interface {
 
   // from Adafruit_USBD_Interface
   uint16_t getDescriptor(uint8_t itfnum,
-                                 uint8_t* buf,
-                                 uint16_t bufsize) override;
+                         uint8_t* buf,
+                         uint16_t bufsize) override;
 
   void setPins(uint8_t pin_rx, uint8_t pin_tx) {
     (void)pin_rx;
