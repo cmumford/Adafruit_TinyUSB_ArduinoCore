@@ -27,7 +27,7 @@
 
 #include <cstdint>
 
-#include "tusb.h"
+#include <tusb.h>
 
 class Adafruit_USBD_Interface {
  protected:

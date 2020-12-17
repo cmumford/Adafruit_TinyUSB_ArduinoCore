@@ -23,7 +23,6 @@
  */
 
 #include "Adafruit_USBD_CDC.h"
-#include "Arduino.h"
 
 #define EPOUT 0x00
 #define EPIN 0x80
