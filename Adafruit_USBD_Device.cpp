@@ -40,13 +40,25 @@
 #define USB_CONFIG_POWER 100
 #endif
 
+namespace {
+
 enum { STRID_LANGUAGE = 0, STRID_MANUFACTURER, STRID_PRODUCT, STRID_SERIAL };
 
-Adafruit_USBD_Device USBDevice;
+Adafruit_USBD_Device* g_device;
+
+}  // namespace
+
+// static
+Adafruit_USBD_Device* Adafruit_USBD_Device::Get() {
+  return g_device;
+}
 
 Adafruit_USBD_Interface::Adafruit_USBD_Interface() : _desc_str(nullptr) {}
 
-Adafruit_USBD_Device::Adafruit_USBD_Device(void) {
+Adafruit_USBD_Device::Adafruit_USBD_Device(
+    std::unique_ptr<Adafruit_USBD_Device_Port> port)
+    : _port(std::move(port)) {
+  g_device = this;
   tusb_desc_device_t const desc_dev = {
       .bLength = sizeof(tusb_desc_device_t),
       .bDescriptorType = TUSB_DESC_DEVICE,
@@ -206,6 +218,8 @@ uint16_t const* Adafruit_USBD_Device::descriptor_string_cb(uint8_t index,
   // up to 32 unicode characters (header make it 33)
   static uint16_t _desc_str[33];
   uint8_t chr_count;
+  constexpr uint8_t kMaxDescriptorLen =
+      (sizeof(_desc_str) / sizeof(_desc_str[0])) - 1;
 
   switch (index) {
     case 0:
@@ -215,7 +229,7 @@ uint16_t const* Adafruit_USBD_Device::descriptor_string_cb(uint8_t index,
 
     case 3:
       // serial Number
-      chr_count = this->getSerialDescriptor(_desc_str + 1);
+      chr_count = _port->getSerialDescriptor(_desc_str + 1, kMaxDescriptorLen);
       break;
 
     default:
@@ -241,7 +255,7 @@ extern "C" {
 // Invoked when received GET DEVICE DESCRIPTOR
 // Application return pointer to descriptor
 uint8_t const* tud_descriptor_device_cb(void) {
-  return (uint8_t const*)&USBDevice._desc_device;
+  return (uint8_t const*)&g_device->_desc_device;
 }
 
 // Invoked when received GET CONFIGURATION DESCRIPTOR
@@ -249,7 +263,7 @@ uint8_t const* tud_descriptor_device_cb(void) {
 // enough for transfer to complete
 uint8_t const* tud_descriptor_configuration_cb(uint8_t index) {
   (void)index;  // for multiple configurations
-  return USBDevice._desc_cfg;
+  return g_device->_desc_cfg;
 }
 
 // Invoked when received GET STRING DESCRIPTOR request
@@ -258,7 +272,7 @@ uint8_t const* tud_descriptor_configuration_cb(uint8_t index) {
 // OS 1.0 Descriptors.
 // https://docs.microsoft.com/en-us/windows-hardware/drivers/usbcon/microsoft-defined-usb-descriptors
 uint16_t const* tud_descriptor_string_cb(uint8_t index, uint16_t langid) {
-  return USBDevice.descriptor_string_cb(index, langid);
+  return g_device->descriptor_string_cb(index, langid);
 }
 
 //--------------------------------------------------------------------+

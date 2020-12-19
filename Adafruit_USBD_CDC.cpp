@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-#include "Adafruit_USBD_CDC.h"
+#include "Adafruit_TinyUSB_Core.h"
 
 #include <cdc/cdc.h>
 #include <cdc/cdc_device.h>

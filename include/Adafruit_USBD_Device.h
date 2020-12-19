@@ -26,6 +26,7 @@
 #define ADAFRUIT_USBD_DEVICE_H_
 
 #include <cstdint>
+#include <memory>
 
 #include <tusb.h>
 
@@ -43,6 +44,26 @@ class Adafruit_USBD_Interface {
   const char* getStringDescriptor(void) { return _desc_str; }
 };
 
+/**
+ * Used for implementing the platform or use-specific items for
+ * Adafruit_USBD_Device.
+ */
+class Adafruit_USBD_Device_Port {
+ public:
+  /**
+   * @brief Get the device serial descriptor string.
+   *
+   * @param serial_str Location to write the descriptor string. Should not be
+   *                   null terminated.
+   *
+   * @param max_num_chars Maximum number of UNICODE characters to write to
+   *                      \p serial_str .
+   *
+   * @return The number of UNICODE characters written.
+   */
+  virtual uint8_t getSerialDescriptor(uint16_t* serial_str,
+                                      uint8_t max_num_chars) = 0;
+};
 class Adafruit_USBD_Device {
  private:
   enum { STRING_DESCRIPTOR_MAX = 8 };
@@ -62,8 +83,12 @@ class Adafruit_USBD_Device {
   const char* _desc_str_arr[STRING_DESCRIPTOR_MAX];
   uint8_t _desc_str_count;
 
+  std::unique_ptr<Adafruit_USBD_Device_Port> _port;
+
  public:
-  Adafruit_USBD_Device(void);
+  static Adafruit_USBD_Device* Get();
+
+  Adafruit_USBD_Device(std::unique_ptr<Adafruit_USBD_Device_Port> port);
 
   bool addInterface(Adafruit_USBD_Interface& itf);
   void setDescriptorBuffer(uint8_t* buf, uint32_t buflen);
@@ -86,9 +111,6 @@ class Adafruit_USBD_Device {
   bool detach(void);  // physical detach by disable pull-up
   bool attach(void);  // physical attach by enable pull-up
 
-  //------------- Platform Dependent APIs -------------//
-  uint8_t getSerialDescriptor(uint16_t* serial_str);
-
  private:
   uint16_t const* descriptor_string_cb(uint8_t index, uint16_t langid);
 
@@ -97,7 +119,5 @@ class Adafruit_USBD_Device {
   friend uint16_t const* tud_descriptor_string_cb(uint8_t index,
                                                   uint16_t langid);
 };
-
-extern Adafruit_USBD_Device USBDevice;
 
 #endif /* ADAFRUIT_USBD_DEVICE_H_ */
